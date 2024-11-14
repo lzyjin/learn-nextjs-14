@@ -1,15 +1,27 @@
 import MovieVideos from "../../../../components/movie-videos";
-import MovieInfo from "../../../../components/movie-info";
+import MovieInfo, {getMovie} from "../../../../components/movie-info";
 import {Suspense} from "react";
 
-export default async function MovieDetail({ params: {id} }: { params: {id: string} }) {
+interface IParams {
+  params: {
+    id: string
+  }
+}
+
+export async function generateMetadata({params: {id}}: IParams) {
+  const movie = await getMovie(id); // 처음으로 데이터 fetching함 -> MovieInfo에서는 api 요청하지 않고 캐싱됌
+
+  return {
+    title: movie.title
+  }
+}
+
+export default async function MovieDetail({params: {id}}: IParams) {
   return (
     <div>
-      <h3>Movie detail page</h3>
       <Suspense fallback={ <h1>loading movie info</h1> }>
         <MovieInfo id={id} />
       </Suspense>
-      <h3>Movie videos page</h3>
       <Suspense fallback={ <h1>loading movie videos</h1> }>
         <MovieVideos id={id} />
       </Suspense>
